@@ -2,31 +2,27 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    overflow: hidden;
+    user-select: none;
     text-align: center;
     background: #f9f9f9;
     font-family: Arial, sans-serif;
 }
 .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
-    max-width: 600px;
+    max-width: 80vw;
     background: #fff;
     margin: 50px auto;
+    font-size: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-h1 {
-    color: #4caf50;
-    font-size: 2rem;
-}
-#question-box {
-    margin: 20px 0;
-    font-size: 1.5rem;
-}
-.input-box {
-    margin: 20px 0;
-}
 #answer {
-    width: 200px;
+    width: 160px;
     padding: 10px;
     font-size: 1rem;
     margin-right: 10px;
@@ -44,12 +40,11 @@ button:hover {
     background: #45a049;
 }
 #feedback {
-    margin: 20px 0;
+    margin: 10px 0;
     font-size: 1.2rem;
     font-weight: bold;
 }
 .scoreboard {
     color: #555;
-    margin: 20px 0;
     font-size: 1rem;
 }

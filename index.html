@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Math Fun for Kids</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>Math</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div id="question-box">
-            <h2 id="question">Question will appear here</h2>
-        </div>
-        <div class="input-box">
+        <h2 id="question"></h2>
+        <div class="answer">
             <input type="number" id="answer" placeholder="Enter your answer">
             <button id="submit-btn">Submit</button>
         </div>
@@ -20,7 +19,6 @@
             <p>Correct Answers: <span id="correct-count">0</span></p>
             <p>Incorrect Answers: <span id="incorrect-count">0</span></p>
         </div>
-        <button id="new-question-btn">New Question</button>
     </div>
     <script src="script.js"></script>
 </body>
