@@ -1,10 +1,10 @@
-const questionBox = document.getElementById("question");
-const answerInput = document.getElementById("answer");
-const feedback = document.getElementById("feedback");
-const correctCountEl = document.getElementById("correct-count");
-const incorrectCountEl = document.getElementById("incorrect-count");
-const newQuestionBtn = document.getElementById("new-question-btn");
-const submitBtn = document.getElementById("submit-btn");
+const questionBox = document.querySelector("#question");
+const answerInput = document.querySelector("#answer");
+const feedback = document.querySelector("#feedback");
+const correctCountEl = document.querySelector("#correct-count");
+const incorrectCountEl = document.querySelector("#incorrect-count");
+const newQuestionBtn = document.querySelector("#new-question-btn");
+const submitBtn = document.querySelector("#submit-btn");
 
 let correctAnswer = 0;
 let correctCount = 0;
