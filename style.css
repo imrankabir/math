@@ -21,6 +21,32 @@ body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+.level {
+    width: 100%;
+    display: flex;
+    margin: 20px 0;
+    justify-content: space-between;
+}
+label {
+    margin: 0 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: #999;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+label:hover {
+    color: #fff;
+    background: #4caf50;
+}
+input[type='radio'] {
+    display: none;
+    margin-right: 5px;
+}
+input[type='radio']:checked + label {
+    color: #fff;
+    background: #4caf50;
+}
 #answer {
     width: 160px;
     padding: 10px;
