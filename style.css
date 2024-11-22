@@ -76,12 +76,23 @@ body {
 }
 canvas {
   border-radius: 5px;
-  border: 1px solid #999;
+  border: 1px solid #abc;
 }
 .controls {
-    gap: 30px;
+    gap: 10px;
     display: flex;
 }
 .controls span {
-    font-size: 1.5rem;
+    font-size: 1rem;
+    padding: 1px 2px;
+    margin-bottom: 3px;
+    border-radius: 5px;
+}
+.disable {
+  cursor: default;
+  background: #fff;
+}
+.enable {
+  cursor: pointer;
+  background: #efe;
 }

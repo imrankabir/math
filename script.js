@@ -7,6 +7,7 @@ const submitBtn = document.querySelector('#submit-btn');
 const levelRadios = document.getElementsByName('level');
 const undoBtn = document.querySelector('#undo-btn');
 const redoBtn = document.querySelector('#redo-btn');
+const clearBtn = document.querySelector('#clear-btn');
 const canvas = document.querySelector('#whiteboard');
 const context = canvas.getContext('2d');
 
@@ -62,8 +63,6 @@ const generateQuestion = force => {
     } else {
         clear(false);
     }
-    console.log('start');
-    console.log({num1, operation, num2, force})
     if (num1 == 0 || force === true) {
         let operations = ['+', '-', '*', '/'];
         if (level === 'easy') {
@@ -111,8 +110,6 @@ const generateQuestion = force => {
             num1 = num1 - num2;
         }
         saveQuestion({level, num1, operation, num2});
-        console.log('after save')
-        console.log({level, num1, operation, num2});
         if (operation === '/') {
             correctAnswer = num1;
             questionBox.textContent = `${num1 * num2} ÷ ${num2}`;
@@ -141,8 +138,6 @@ const generateQuestion = force => {
             questionBox.textContent = `${num1} - ${num2}`;
         }
     }
-    console.log('show')
-    console.log({level, num1, operation, num2});
     feedback.textContent = '';
     answerInput.value = '';
 };
@@ -162,11 +157,17 @@ const checkAnswer = e => {
         feedback.textContent = 'Correct! 🎉';
         feedback.style.color = 'green';
         correctCount++;
+        if (document.querySelector('#auto-clear').checked) {
+            clear();
+        }
         setTimeout(e => generateQuestion(true), 1000);
     } else {
         feedback.textContent = `Wrong! The correct answer was ${correctAnswer}.`;
         feedback.style.color = 'red';
         incorrectCount++;
+        if (document.querySelector('#auto-clear').checked) {
+            clear();
+        }
         setTimeout(e => generateQuestion(true), 3000);
     }
 
@@ -231,6 +232,8 @@ const clear = (clearData = true) => {
   undoBtn.classList.remove('enable');
   redoBtn.classList.add('disable');
   redoBtn.classList.remove('enable');
+  clearBtn.classList.add('disable');
+  clearBtn.classList.remove('enable');
   if (clearData) {
     data = [];
     removedData = [];
@@ -255,6 +258,13 @@ const drawAll = e => {
   } else {
     redoBtn.classList.add('enable');
     redoBtn.classList.remove('disable');
+  }
+  if (data.length == 0 && removedData.length == 0) {
+    clearBtn.classList.add('disable');
+    clearBtn.classList.remove('enable');
+  } else {
+    clearBtn.classList.add('enable');
+    clearBtn.classList.remove('disable');
   }
   data.forEach(lineData => {
     let c = 0;
@@ -294,24 +304,27 @@ const getCoordinates = e => {
 };
 
 const draw = e => {
-  if (!painting) return;
+    if (!painting) return;
 
-  let { x, y } = getCoordinates(e);
+    let { x, y } = getCoordinates(e);
 
-  context.lineWidth = 1;
-  context.lineCap = 'round';
-  context.strokeStyle = '#000000';
+    context.lineWidth = 1;
+    context.lineCap = 'round';
+    context.strokeStyle = '#000000';
 
-  context.lineTo(x, y);
-  context.stroke();
-  context.beginPath();
-  context.moveTo(x, y);
-  singleData.push({ x, y });
+    context.lineTo(x, y);
+    context.stroke();
+    context.beginPath();
+    context.moveTo(x, y);
+    singleData.push({ x, y });
 
-  lastX = x;
-  lastY = y;
+    lastX = x;
+    lastY = y;
 
-  e.preventDefault();
+    clearBtn.classList.add('enable');
+    clearBtn.classList.remove('disable');
+
+    e.preventDefault();
 };
 
 canvas.addEventListener('mousedown', startPosition);
@@ -351,5 +364,4 @@ document.addEventListener('keydown', e => {
     if (d.length !== 0) {
         drawAll();
     }
-    console.log({level});
 })();
