@@ -1,19 +1,26 @@
 const questionBox = document.querySelector('#question');
 const answerInput = document.querySelector('#answer');
 const feedback = document.querySelector('#feedback');
-const correctCountEl = document.querySelector('#correct-count');
-const incorrectCountEl = document.querySelector('#incorrect-count');
+const correctCountEle = document.querySelector('#correct-count');
+const incorrectCountEle = document.querySelector('#incorrect-count');
 const submitBtn = document.querySelector('#submit-btn');
 const levelRadios = document.getElementsByName('level');
+const undoBtn = document.querySelector('#undo-btn');
+const redoBtn = document.querySelector('#redo-btn');
 const canvas = document.querySelector('#whiteboard');
 const context = canvas.getContext('2d');
 
 canvas.width = window.innerWidth * 0.95;
-canvas.height = window.innerHeight * 0.85 - 220;
+canvas.height = window.innerHeight * 0.85 - 100;
 
 let correctAnswer = 0;
 let correctCount = 0;
 let incorrectCount = 0;
+
+let painting = false;
+let data = [];
+let singleData = [];
+let removedData = [];
 
 const getScore = level => JSON.parse(localStorage.getItem(`math-scores-${level}`)) ?? {correctCount: 0, incorrectCount: 0};
 const saveScore = score => localStorage.setItem(`math-scores-${score.level}`, JSON.stringify(score));
@@ -24,6 +31,9 @@ const saveLevel = level => localStorage.setItem('math-level', level);
 const getQuestion = level => JSON.parse(localStorage.getItem(`math-question-${level}`)) ?? {num1: 0, operation: '+', num2: 0};
 const saveQuestion = question => localStorage.setItem(`math-question-${question.level}`, JSON.stringify(question));
 
+const getData = level => JSON.parse(localStorage.getItem(`math-data-${level}`)) ?? {data: [], removedData: []};
+const saveData = ({level, data, removedData}) => localStorage.setItem(`math-data-${level}`, JSON.stringify({data, removedData}));
+
 const saveSelectedLevel = e => {
     for (const radio of levelRadios) {
         if (radio.checked) {
@@ -31,8 +41,8 @@ const saveSelectedLevel = e => {
             saveLevel(level);
             generateQuestion();
             let {correctCount, incorrectCount} = getScore(level);
-            correctCountEl.textContent = correctCount;
-            incorrectCountEl.textContent = incorrectCount;
+            correctCountEle.textContent = correctCount;
+            incorrectCountEle.textContent = incorrectCount;
         }
     }
 };
@@ -41,9 +51,17 @@ const generateQuestion = force => {
     submitBtn.disabled = false;
     const level = getLevel();
     const {correctCount, incorrectCount} = getScore(level);
-    correctCountEl.textContent = correctCount;
-    incorrectCountEl.textContent = incorrectCount;
+    correctCountEle.textContent = correctCount;
+    incorrectCountEle.textContent = incorrectCount;
     let {num1, operation, num2} = getQuestion(level);
+    const {data: d, removedData: rd} = getData(level);
+    data = d;
+    removedData = rd;
+    if (d.length !== 0) {
+        drawAll();
+    } else {
+        clear(false);
+    }
     console.log('start');
     console.log({num1, operation, num2, force})
     if (num1 == 0 || force === true) {
@@ -152,17 +170,186 @@ const checkAnswer = e => {
         setTimeout(e => generateQuestion(true), 3000);
     }
 
-    correctCountEl.textContent = correctCount;
-    incorrectCountEl.textContent = incorrectCount;
+    correctCountEle.textContent = correctCount;
+    incorrectCountEle.textContent = incorrectCount;
     saveScore({level, correctCount, incorrectCount});
 };
 
 submitBtn.addEventListener('click', checkAnswer);
 levelRadios.forEach(levelRadio => levelRadio.addEventListener('click', saveSelectedLevel));
 
+const startPosition = e => {
+  painting = true;
+  const { x, y } = getCoordinates(e);
+  lastX = x;
+  lastY = y;
+  draw(e);
+  e.preventDefault();
+};
+
+const endPosition = e => {
+  painting = false;
+  const level = getLevel();
+  context.beginPath();
+  data.push(singleData);
+  saveData({level, data, removedData});
+  singleData = [];
+  if (data.length == 0) {
+    undoBtn.classList.add('disable');
+    undoBtn.classList.remove('enable');
+  } else {
+    undoBtn.classList.add('enable');
+    undoBtn.classList.remove('disable');
+  }
+  e.preventDefault();
+};
+
+const undo = e => {
+  if (data.length == 0) {
+    console.warn('No undo available');
+    return false;
+  }
+  const level = getLevel();
+  removedData.push(data.pop());
+  saveData({level, data, removedData});
+  drawAll();
+};
+
+const redo = e => {
+  if (removedData.length == 0) {
+    console.warn('No redo available');
+    return false;
+  }
+  const level = getLevel();
+  data.push(removedData.pop());
+  saveData({level, data, removedData});
+  drawAll();
+};
+
+const clear = (clearData = true) => {
+  undoBtn.classList.add('disable');
+  undoBtn.classList.remove('enable');
+  redoBtn.classList.add('disable');
+  redoBtn.classList.remove('enable');
+  if (clearData) {
+    data = [];
+    removedData = [];
+    const level = getLevel();
+    saveData({level, data, removedData});
+  }
+  context.clearRect(0, 0, canvas.width, canvas.height);
+};
+
+const drawAll = e => {
+  clear(false);
+  if (data.length == 0) {
+    undoBtn.classList.add('disable');
+    undoBtn.classList.remove('enable');
+  } else {
+    undoBtn.classList.add('enable');
+    undoBtn.classList.remove('disable');
+  }
+  if (removedData.length == 0) {
+    redoBtn.classList.add('disable');
+    redoBtn.classList.remove('enable');
+  } else {
+    redoBtn.classList.add('enable');
+    redoBtn.classList.remove('disable');
+  }
+  data.forEach(lineData => {
+    let c = 0;
+    lineData.forEach(point => {
+      const { x, y } = point;
+      context.lineWidth = 1;
+      context.lineCap = 'round';
+      context.strokeStyle = '#000000';
+      if (c == 0) {
+        context.beginPath();
+        context.lineTo(x, y);
+        context.stroke();
+      } else if (lineData.length == c) {
+        context.moveTo(x, y);
+        context.stroke();
+        context.beginPath();
+      } else {
+        context.lineTo(x, y);
+        context.stroke();
+      }
+      c++;
+    });
+    context.beginPath();
+  });
+};
+
+const getCoordinates = e => {
+  let x, y;
+  if (e.type.includes('touch')) {
+    x = e.touches[0].clientX - canvas.offsetLeft;
+    y = e.touches[0].clientY - canvas.offsetTop;
+  } else {
+    x = e.clientX - canvas.offsetLeft;
+    y = e.clientY - canvas.offsetTop;
+  }
+  return { x, y };
+};
+
+const draw = e => {
+  if (!painting) return;
+
+  let { x, y } = getCoordinates(e);
+
+  context.lineWidth = 1;
+  context.lineCap = 'round';
+  context.strokeStyle = '#000000';
+
+  context.lineTo(x, y);
+  context.stroke();
+  context.beginPath();
+  context.moveTo(x, y);
+  singleData.push({ x, y });
+
+  lastX = x;
+  lastY = y;
+
+  e.preventDefault();
+};
+
+canvas.addEventListener('mousedown', startPosition);
+canvas.addEventListener('mouseup', endPosition);
+canvas.addEventListener('mousemove', draw);
+
+canvas.addEventListener('touchstart', startPosition);
+canvas.addEventListener('touchend', endPosition);
+canvas.addEventListener('touchmove', draw);
+
+document.querySelector('#clear-btn').addEventListener('click', clear);
+document.querySelector('#undo-btn').addEventListener('click', undo);
+document.querySelector('#redo-btn').addEventListener('click', redo);
+
+document.addEventListener('keydown', e => {
+  switch (e.which) {
+    case 38:
+    case 67:
+      clear();
+      break;
+    case 37:
+      undo();
+      break;
+    case 39:
+      redo();
+      break;
+  }
+});
+
 (e => {
     generateQuestion();
     const level = getLevel();
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
+    const {data: d, removedData: rd} = getData(level);
+    data = d;
+    removedData = rd;
+    if (d.length !== 0) {
+        drawAll();
+    }
     console.log({level});
 })();

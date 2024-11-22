@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
     <title>Math</title>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
-    <link rel="stylesheet" href="style.css?v=1">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
     <div class="container">
@@ -27,8 +27,14 @@
             <p>Correct Answers: <span id="correct-count">0</span></p>
             <p>Incorrect Answers: <span id="incorrect-count">0</span></p>
         </div>
+        <div class="controls">
+            <span id="undo-btn" title="Undo (&#8656;)">&#8634;</span>
+            <span id="redo-btn" title="Redo (&#8658;)">&#8635;</span>
+            <span id="clear-btn" title="Clear board (c)">&#10226;</span>
+            <!-- <span id="download-btn" title="Download picture (d)">&#8595;</span> -->
+        </div>
         <canvas id="whiteboard"></canvas>
     </div>
-    <script src="script.js?v=1"></script>
+    <script src="script.js?v=2"></script>
 </body>
 </html>

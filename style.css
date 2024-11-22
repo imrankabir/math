@@ -11,23 +11,19 @@ body {
 }
 .container {
     display: flex;
+    background: #fff;
+    margin-top: 5px;
+    font-size: 1.5rem;
+    align-items: center;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    padding: 20px;
-/*    max-width: 80vw;*/
-    background: #fff;
-/*    margin: 50px auto;*/
-    font-size: 1.5rem;
-/*    border-radius: 8px;*/
-/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);*/
 }
 .level label {
     margin: 0 10px;
-    font-size: 1rem;
     cursor: pointer;
+    font-size: .8rem;
     background: #999;
-    padding: 10px 20px;
+    padding: 5px 10px;
     border-radius: 5px;
 }
 .level label:hover {
@@ -42,18 +38,22 @@ body {
     color: #fff;
     background: #4caf50;
 }
+#question {
+    font-size: 1.5rem;   
+    margin-block: 12px;
+}
 #answer {
     width: 160px;
-    padding: 10px;
-    font-size: 1rem;
+    padding: 5px;
+    font-size: .8rem;
     margin-right: 10px;
 }
 .answer button {
     color: white;
     border: none;
-    font-size: 1rem;
     cursor: pointer;
-    padding: 10px 20px;
+    font-size: .8rem;
+    padding: 5px 10px;
     background: #4caf50;
     border-radius: 5px;
 }
@@ -61,15 +61,27 @@ body {
     background: #45a049;
 }
 #feedback {
-    margin: 10px 0;
-    font-size: 1.2rem;
-    font-weight: bold;
+    height: 10px;
+    margin-top: 5px;
+    font-size: .8rem;
 }
 .scoreboard {
+    gap: 20px;
     color: #555;
-    font-size: 1rem;
+    display: flex;
+    font-size: .8rem;
+}
+.scoreboard p {
+    font-size: .8rem;
 }
 canvas {
   border-radius: 5px;
   border: 1px solid #999;
+}
+.controls {
+    gap: 30px;
+    display: flex;
+}
+.controls span {
+    font-size: 1.5rem;
 }
