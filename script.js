@@ -355,6 +355,12 @@ document.addEventListener('keydown', e => {
 });
 
 (e => {
+    const url = new URLSearchParams(window.location.search);
+    if (url.has('c')) {
+        localStorage.clear();
+        url.delete('c');
+        window.history.replaceState(null, '', window.location.pathname);
+    }
     generateQuestion();
     const level = getLevel();
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
