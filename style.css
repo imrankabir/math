@@ -38,17 +38,17 @@ body {
     color: #fff;
     background: #4caf50;
 }
-#question {
+.question {
     font-size: 1.5rem;   
-    margin-block: 12px;
+    margin-block: .5rem;
 }
-#answer {
+.answer {
     width: 160px;
     padding: 5px;
     font-size: .8rem;
     margin-right: 10px;
 }
-.answer button {
+.answer-container button {
     color: white;
     border: none;
     cursor: pointer;
@@ -57,10 +57,10 @@ body {
     background: #4caf50;
     border-radius: 5px;
 }
-.answer button:hover {
+.answer-container button:hover {
     background: #45a049;
 }
-#feedback {
+.feedback {
     height: 10px;
     margin-top: 5px;
     font-size: .8rem;
@@ -73,6 +73,7 @@ body {
 }
 .scoreboard p {
     font-size: .8rem;
+    margin-block: .5rem;
 }
 canvas {
   border-radius: 5px;
@@ -95,4 +96,7 @@ canvas {
 .enable {
   cursor: pointer;
   background: #efe;
+}
+.time {
+    font-size: .8rem;
 }
