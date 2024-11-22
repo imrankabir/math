@@ -6,6 +6,7 @@ body {
     user-select: none;
     text-align: center;
     background: #f9f9f9;
+    box-sizing: border-box;
     font-family: Arial, sans-serif;
 }
 .container {
@@ -14,12 +15,12 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    max-width: 80vw;
+/*    max-width: 80vw;*/
     background: #fff;
-    margin: 50px auto;
+/*    margin: 50px auto;*/
     font-size: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+/*    border-radius: 8px;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);*/
 }
 .level label {
     margin: 0 10px;
@@ -47,7 +48,7 @@ body {
     font-size: 1rem;
     margin-right: 10px;
 }
-button {
+.answer button {
     color: white;
     border: none;
     font-size: 1rem;
@@ -56,7 +57,7 @@ button {
     background: #4caf50;
     border-radius: 5px;
 }
-button:hover {
+.answer button:hover {
     background: #45a049;
 }
 #feedback {
@@ -67,4 +68,8 @@ button:hover {
 .scoreboard {
     color: #555;
     font-size: 1rem;
+}
+canvas {
+  border-radius: 5px;
+  border: 1px solid #999;
 }

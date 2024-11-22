@@ -5,6 +5,11 @@ const correctCountEl = document.querySelector('#correct-count');
 const incorrectCountEl = document.querySelector('#incorrect-count');
 const submitBtn = document.querySelector('#submit-btn');
 const levelRadios = document.getElementsByName('level');
+const canvas = document.querySelector('#whiteboard');
+const context = canvas.getContext('2d');
+
+canvas.width = window.innerWidth * 0.95;
+canvas.height = window.innerHeight * 0.85 - 220;
 
 let correctAnswer = 0;
 let correctCount = 0;
