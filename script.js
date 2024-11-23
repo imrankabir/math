@@ -28,7 +28,7 @@ let interval = null;
 const getScore = level => JSON.parse(localStorage.getItem(`math-scores-${level}`)) ?? {correctCount: 0, incorrectCount: 0};
 const saveScore = score => localStorage.setItem(`math-scores-${score.level}`, JSON.stringify(score));
 
-const getLevel = e => localStorage.getItem('math-level') ?? 'easy';
+const getLevel = e => localStorage.getItem('math-level') ?? 'novice';
 const saveLevel = level => localStorage.setItem('math-level', level);
 
 const getQuestion = level => JSON.parse(localStorage.getItem(`math-question-${level}`)) ?? {num1: 0, operation: '+', num2: 0};
@@ -78,13 +78,23 @@ const generateQuestion = (force, level) => {
     let {num1, operation, num2} = getQuestion(level);
     if (num1 == 0 || force === true) {
         let operations = ['+', '-', '*', '/'];
-        if (level === 'easy') {
+        if (level === 'novice') {
+            operations.splice(-2);
+        } else if (level === 'easy') {
             operations.pop();
         }
         operation = operations[Math.floor(Math.random() * operations.length)];
         let maxNum1 = 0;
         let maxNum2 = 0;
-        if (level === 'easy') {
+        if (level === 'novice') {
+            if (operation === '-') {
+                maxNum1 = 5;
+                maxNum2 = 3;
+            } else {
+                maxNum1 = 6;
+                maxNum2 = 4;
+            }
+        } else if (level === 'easy') {
             if (operation === '*') {
                 maxNum1 = 10;
                 maxNum2 = 10;
@@ -356,13 +366,17 @@ const timer = level => {
 };
 
 (e => {
+    const level = getLevel();
     const url = new URLSearchParams(window.location.search);
     if (url.has('c')) {
-        localStorage.clear();
+        // localStorage.clear();
+        localStorage.removeItem(`math-data-${level}`);
+        localStorage.removeItem(`math-question-${level}`);
+        localStorage.removeItem(`math-scores-${level}`);
+        localStorage.removeItem(`math-time-${level}`);
         url.delete('c');
         window.history.replaceState(null, '', window.location.pathname);
     }
-    const level = getLevel();
     generateQuestion(false, level);
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
     timer(level);
