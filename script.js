@@ -367,17 +367,17 @@ const timer = level => {
 
 (e => {
     const level = getLevel();
-    const url = new URLSearchParams(window.location.search);
-    console.log({url});
-    if (url.has('clear')) {
-        // localStorage.clear();
-        localStorage.removeItem(`math-data-${level}`);
-        localStorage.removeItem(`math-question-${level}`);
-        localStorage.removeItem(`math-scores-${level}`);
-        localStorage.removeItem(`math-time-${level}`);
-        url.delete('clear');
-        window.history.replaceState(null, '', window.location.pathname);
-    }
+    // const url = new URLSearchParams(window.location.search);
+    // console.log({url});
+    // if (url.has('clear')) {
+    //     // localStorage.clear();
+    //     localStorage.removeItem(`math-data-${level}`);
+    //     localStorage.removeItem(`math-question-${level}`);
+    //     localStorage.removeItem(`math-scores-${level}`);
+    //     localStorage.removeItem(`math-time-${level}`);
+    //     url.delete('clear');
+    //     window.history.replaceState(null, '', window.location.pathname);
+    // }
     generateQuestion(false, level);
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
     timer(level);
