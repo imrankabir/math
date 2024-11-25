@@ -79,7 +79,7 @@ const generateQuestion = (force, level) => {
     if (num1 == 0 || force === true) {
         let operations = ['+', '-', '*', '/'];
         if (level === 'novice') {
-            operations.splice(-2);
+            operations.splice(-3);
         } else if (level === 'easy') {
             operations.pop();
         }
