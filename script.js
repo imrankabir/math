@@ -25,20 +25,23 @@ let removedData = [];
 
 let interval = null;
 
-const getScore = level => JSON.parse(localStorage.getItem(`math-scores-${level}`)) ?? {correctCount: 0, incorrectCount: 0};
-const saveScore = score => localStorage.setItem(`math-scores-${score.level}`, JSON.stringify(score));
+const get = (k, d) => JSON.parse(localStorage.getItem(`math-${k}`)) ?? d;
+const set = (k, v) => localStorage.setItem(`math-${k}`, JSON.stringify(v));
+
+// const getScore = level => JSON.parse(localStorage.getItem(`math-scores-${level}`)) ?? {correctCount: 0, incorrectCount: 0};
+// const saveScore = score => localStorage.setItem(`math-scores-${score.level}`, JSON.stringify(score));
 
 const getLevel = e => localStorage.getItem('math-level') ?? 'novice';
-const saveLevel = level => localStorage.setItem('math-level', level);
+// const saveLevel = level => localStorage.setItem('math-level', level);
 
-const getQuestion = level => JSON.parse(localStorage.getItem(`math-question-${level}`)) ?? {num1: 0, operation: '+', num2: 0};
-const saveQuestion = question => localStorage.setItem(`math-question-${question.level}`, JSON.stringify(question));
+// const getQuestion = level => JSON.parse(localStorage.getItem(`math-question-${level}`)) ?? {num1: 0, operation: '+', num2: 0};
+// const saveQuestion = question => localStorage.setItem(`math-question-${question.level}`, JSON.stringify(question));
 
-const getData = level => JSON.parse(localStorage.getItem(`math-data-${level}`)) ?? {data: [], removedData: []};
-const saveData = ({level, data, removedData}) => localStorage.setItem(`math-data-${level}`, JSON.stringify({data, removedData}));
+// const getData = level => JSON.parse(localStorage.getItem(`math-data-${level}`)) ?? {data: [], removedData: []};
+// const saveData = ({level, data, removedData}) => localStorage.setItem(`math-data-${level}`, JSON.stringify({data, removedData}));
 
 const getTime = level => localStorage.getItem(`math-time-${level}`) ?? 0;
-const saveTime = time => localStorage.setItem(`math-time-${time.level}`, time.time);
+// const saveTime = time => localStorage.setItem(`math-time-${time.level}`, time.time);
 
 const formatTime = time => {
     const hours = Math.floor(time / 3600);
@@ -53,9 +56,9 @@ const changeSelectedLevel = e => {
             level = radio.value;
             clearInterval(interval);
             timer(level);
-            saveLevel(level);
+            set('level', {level});
             generateQuestion(false, level);
-            const {data: d, removedData: rd} = getData(level);
+            const {data: d, removedData: rd} = get(`data-${level}`, {data: [], removedData: []});
             data = d;
             removedData = rd;
             if (d.length !== 0) {
@@ -63,7 +66,7 @@ const changeSelectedLevel = e => {
             } else {
                 clear(false);
             }
-            let {correctCount, incorrectCount} = getScore(level);
+            let {correctCount, incorrectCount} = get(`scores-${level}`, {correctCount: 0, incorrectCount: 0});
             correctCountEle.textContent = correctCount;
             incorrectCountEle.textContent = incorrectCount;
         }
@@ -72,10 +75,10 @@ const changeSelectedLevel = e => {
 
 const generateQuestion = (force, level) => {
     submitBtn.disabled = false;
-    const {correctCount, incorrectCount} = getScore(level);
+    const {correctCount, incorrectCount} = get(`scores-${level}`, {correctCount: 0, incorrectCount: 0});
     correctCountEle.textContent = correctCount;
     incorrectCountEle.textContent = incorrectCount;
-    let {num1, operation, num2} = getQuestion(level);
+    let {num1, operation, num2} = get(`question-${level}`, {num1: 0, operation: '+', num2: 0});
     if (num1 == 0 || force === true) {
         let operations = ['+', '-', '*', '/'];
         if (level === 'novice') {
@@ -132,7 +135,7 @@ const generateQuestion = (force, level) => {
             num2 = num1 - num2;
             num1 = num1 - num2;
         }
-        saveQuestion({level, num1, operation, num2});
+        set(`question-${level}`, {num1, operation, num2});
         if (operation === '/') {
             correctAnswer = num1;
             questionBox.textContent = `${num1 * num2} ÷ ${num2}`;
@@ -166,16 +169,15 @@ const generateQuestion = (force, level) => {
 };
 
 const checkAnswer = e => {
-    const level = getLevel();
+    const { level } = get('level', {level: 'novice'});
     const userAnswer = parseInt(answerInput.value);
     if (isNaN(userAnswer)) {
         feedback.textContent = 'Please enter a valid number!';
         feedback.style.color = 'red';
         return;
     }
-    let {correctCount, incorrectCount} = getScore(level);
+    let {correctCount, incorrectCount} = get(`scores-${level}`, {correctCount: 0, incorrectCount: 0});
     submitBtn.disabled = true;
-
     if (userAnswer === correctAnswer) {
         feedback.textContent = 'Correct! 🎉';
         feedback.style.color = 'green';
@@ -193,10 +195,9 @@ const checkAnswer = e => {
         }
         setTimeout(e => generateQuestion(true, level), 3000);
     }
-
     correctCountEle.textContent = correctCount;
     incorrectCountEle.textContent = incorrectCount;
-    saveScore({level, correctCount, incorrectCount});
+    set(`scores-${level}`, {correctCount, incorrectCount});
 };
 
 submitBtn.addEventListener('click', checkAnswer);
@@ -205,18 +206,18 @@ levelRadios.forEach(levelRadio => levelRadio.addEventListener('click', changeSel
 const startPosition = e => {
   painting = true;
   const { x, y } = getCoordinates(e);
-  lastX = x;
-  lastY = y;
+  // lastX = x;
+  // lastY = y;
   draw(e);
   e.preventDefault();
 };
 
 const endPosition = e => {
     painting = false;
-    const level = getLevel();
+    const { level } = get('level', {level: 'novice'});
     context.beginPath();
     data.push(singleData);
-    saveData({level, data, removedData});
+    set(`data-${level}`, {data, removedData});
     singleData = [];
     undoBtn.classList.add('enable');
     undoBtn.classList.remove('disable');
@@ -230,9 +231,9 @@ const undo = e => {
     console.warn('No undo available');
     return false;
   }
-  const level = getLevel();
+  const { level } = get('level', {level: 'novice'});
   removedData.push(data.pop());
-  saveData({level, data, removedData});
+  set(`data-${level}`, {data, removedData});
   drawAll();
 };
 
@@ -241,9 +242,9 @@ const redo = e => {
     console.warn('No redo available');
     return false;
   }
-  const level = getLevel();
+  const { level } = get('level', {level: 'novice'});
   data.push(removedData.pop());
-  saveData({level, data, removedData});
+  set(`data-${level}`, {data, removedData});
   drawAll();
 };
 
@@ -257,8 +258,8 @@ const clear = (clearData = true) => {
   if (clearData) {
     data = [];
     removedData = [];
-    const level = getLevel();
-    saveData({level, data, removedData});
+    const { level } = get('level', {level: 'novice'});
+    set(`data-${level}`, {data, removedData});
   }
   context.clearRect(0, 0, canvas.width, canvas.height);
 };
@@ -313,18 +314,14 @@ const getCoordinates = e => {
 
 const draw = e => {
     if (!painting) return;
-
     let { x, y } = getCoordinates(e);
-
     context.lineTo(x, y);
     context.stroke();
     context.beginPath();
     context.moveTo(x, y);
     singleData.push({ x, y });
-
-    lastX = x;
-    lastY = y;
-
+    // lastX = x;
+    // lastY = y;
     e.preventDefault();
 };
 
@@ -356,17 +353,40 @@ document.addEventListener('keydown', e => {
 });
 
 const timer = level => {
-    let time = getTime(level);
+    let time = null;
+    try {
+        const { time: t } = get(`time-${level}`, {time: 0});
+        time = t;
+        console.info({level, time, t});
+        if (time == null) {
+            time = getTime(level);
+            console.warn({level, time, t});
+            set(`time-${level}`, {time});
+        }
+    } catch(error) {
+        console.error({level});
+    }
+    // let { time } = get(`time-${level}`, {time: 0});
     document.querySelector('.time').textContent = formatTime(time);
     interval = setInterval(e => {
         time++;
-        saveTime({level, time})
+        set(`time-${level}`, {time})
         document.querySelector('.time').textContent = formatTime(time);
     }, 1000);
 };
 
 (e => {
-    const level = getLevel();
+    let level = null;
+    try {
+        const { level: l } = get('level', {level: 'novice'});
+        level = l;
+    } catch(error) {
+        level = getLevel();
+        set('level', {level});
+        time = getTime(level);
+        console.warn({level, time});
+        set(`time-${level}`, {time});
+    }
     // const url = new URLSearchParams(window.location.search);
     // console.log({url});
     // if (url.has('clear')) {
@@ -381,7 +401,7 @@ const timer = level => {
     generateQuestion(false, level);
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
     timer(level);
-    const {data: d, removedData: rd} = getData(level);
+    const {data: d, removedData: rd} = get(`data-${level}`, {data: [], removedData: []});
     data = d;
     removedData = rd;
     if (d.length !== 0) {
