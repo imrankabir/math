@@ -9,7 +9,7 @@ const undoBtn = document.querySelector('#undo-btn');
 const redoBtn = document.querySelector('#redo-btn');
 const clearBtn = document.querySelector('#clear-btn');
 const canvas = document.querySelector('#whiteboard');
-const context = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth * 0.95;
 canvas.height = window.innerHeight * 0.85 - 100;
@@ -215,7 +215,7 @@ const startPosition = e => {
 const endPosition = e => {
     painting = false;
     const { level } = get('level', {level: 'novice'});
-    context.beginPath();
+    ctx.beginPath();
     data.push(singleData);
     set(`data-${level}`, {data, removedData});
     singleData = [];
@@ -261,7 +261,7 @@ const clear = (clearData = true) => {
     const { level } = get('level', {level: 'novice'});
     set(`data-${level}`, {data, removedData});
   }
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 };
 
 const drawAll = e => {
@@ -283,20 +283,20 @@ const drawAll = e => {
     lineData.forEach(point => {
       const { x, y } = point;
       if (c == 0) {
-        context.beginPath();
-        context.lineTo(x, y);
-        context.stroke();
+        ctx.beginPath();
+        ctx.lineTo(x, y);
+        ctx.stroke();
       } else if (lineData.length == c) {
-        context.moveTo(x, y);
-        context.stroke();
-        context.beginPath();
+        ctx.moveTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
       } else {
-        context.lineTo(x, y);
-        context.stroke();
+        ctx.lineTo(x, y);
+        ctx.stroke();
       }
       c++;
     });
-    context.beginPath();
+    ctx.beginPath();
   });
 };
 
@@ -315,11 +315,13 @@ const getCoordinates = e => {
 const draw = e => {
     if (!painting) return;
     let { x, y } = getCoordinates(e);
-    context.lineTo(x, y);
-    context.stroke();
-    context.beginPath();
-    context.moveTo(x, y);
-    singleData.push({ x, y });
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    if (x || y) {
+        singleData.push({ x, y });
+    }
     // lastX = x;
     // lastY = y;
     e.preventDefault();
@@ -357,10 +359,8 @@ const timer = level => {
     try {
         const { time: t } = get(`time-${level}`, {time: 0});
         time = t;
-        console.info({level, time, t});
         if (time == null) {
             time = getTime(level);
-            console.warn({level, time, t});
             set(`time-${level}`, {time});
         }
     } catch(error) {
@@ -388,7 +388,6 @@ const timer = level => {
         set(`time-${level}`, {time});
     }
     // const url = new URLSearchParams(window.location.search);
-    // console.log({url});
     // if (url.has('clear')) {
     //     // localStorage.clear();
     //     localStorage.removeItem(`math-data-${level}`);
