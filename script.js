@@ -206,8 +206,6 @@ levelRadios.forEach(levelRadio => levelRadio.addEventListener('click', changeSel
 const startPosition = e => {
   painting = true;
   const { x, y } = getCoordinates(e);
-  // lastX = x;
-  // lastY = y;
   draw(e);
   e.preventDefault();
 };
@@ -322,8 +320,6 @@ const draw = e => {
     if (x || y) {
         singleData.push({ x, y });
     }
-    // lastX = x;
-    // lastY = y;
     e.preventDefault();
 };
 
