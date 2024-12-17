@@ -1,14 +1,14 @@
-const questionBox = document.querySelector('#question');
-const answerInput = document.querySelector('#answer');
-const feedback = document.querySelector('#feedback');
-const correctCountEle = document.querySelector('#correct-count');
-const incorrectCountEle = document.querySelector('#incorrect-count');
-const submitBtn = document.querySelector('#submit-btn');
-const levelRadios = document.getElementsByName('level');
 const undoBtn = document.querySelector('#undo-btn');
 const redoBtn = document.querySelector('#redo-btn');
-const clearBtn = document.querySelector('#clear-btn');
+const feedback = document.querySelector('#feedback');
 const canvas = document.querySelector('#whiteboard');
+const answerInput = document.querySelector('#answer');
+const clearBtn = document.querySelector('#clear-btn');
+const levelRadios = document.getElementsByName('level');
+const submitBtn = document.querySelector('#submit-btn');
+const questionBox = document.querySelector('#question');
+const correctCountEle = document.querySelector('#correct-count');
+const incorrectCountEle = document.querySelector('#incorrect-count');
 const ctx = canvas.getContext('2d');
 
 canvas.width = window.innerWidth * 0.95;
@@ -50,14 +50,14 @@ const formatTime = time => {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-const changeSelectedLevel = e => {
+const change = e => {
     for (const radio of levelRadios) {
         if (radio.checked) {
             level = radio.value;
             clearInterval(interval);
             timer(level);
             set('level', {level});
-            generateQuestion(false, level);
+            question(false, level);
             const {data: d, removedData: rd} = get(`data-${level}`, {data: [], removedData: []});
             data = d;
             removedData = rd;
@@ -73,7 +73,7 @@ const changeSelectedLevel = e => {
     }
 };
 
-const generateQuestion = (force, level) => {
+const question = (force, level) => {
     submitBtn.disabled = false;
     const {correctCount, incorrectCount} = get(`scores-${level}`, {correctCount: 0, incorrectCount: 0});
     correctCountEle.textContent = correctCount;
@@ -94,8 +94,8 @@ const generateQuestion = (force, level) => {
                 maxNum1 = 5;
                 maxNum2 = 3;
             } else {
-                maxNum1 = 6;
-                maxNum2 = 4;
+                maxNum1 = 8;
+                maxNum2 = 6;
             }
         } else if (level === 'easy') {
             if (operation === '*') {
@@ -168,7 +168,7 @@ const generateQuestion = (force, level) => {
     answerInput.value = '';
 };
 
-const checkAnswer = e => {
+const answer = e => {
     const { level } = get('level', {level: 'novice'});
     const userAnswer = parseInt(answerInput.value);
     if (isNaN(userAnswer)) {
@@ -185,7 +185,7 @@ const checkAnswer = e => {
         if (document.querySelector('#auto-clear').checked) {
             clear();
         }
-        setTimeout(e => generateQuestion(true, level), 1000);
+        setTimeout(e => question(true, level), 1000);
     } else {
         feedback.textContent = `Wrong! The correct answer was ${correctAnswer}.`;
         feedback.style.color = 'red';
@@ -193,24 +193,24 @@ const checkAnswer = e => {
         if (document.querySelector('#auto-clear').checked) {
             clear();
         }
-        setTimeout(e => generateQuestion(true, level), 3000);
+        setTimeout(e => question(true, level), 3000);
     }
     correctCountEle.textContent = correctCount;
     incorrectCountEle.textContent = incorrectCount;
     set(`scores-${level}`, {correctCount, incorrectCount});
 };
 
-submitBtn.addEventListener('click', checkAnswer);
-levelRadios.forEach(levelRadio => levelRadio.addEventListener('click', changeSelectedLevel));
+submitBtn.addEventListener('click', answer);
+levelRadios.forEach(levelRadio => levelRadio.addEventListener('click', change));
 
-const startPosition = e => {
+const start = e => {
   painting = true;
-  const { x, y } = getCoordinates(e);
+  const { x, y } = coords(e);
   draw(e);
   e.preventDefault();
 };
 
-const endPosition = e => {
+const end = e => {
     painting = false;
     const { level } = get('level', {level: 'novice'});
     ctx.beginPath();
@@ -298,7 +298,7 @@ const drawAll = e => {
   });
 };
 
-const getCoordinates = e => {
+const coords = e => {
   let x, y;
   if (e.type.includes('touch')) {
     x = e.touches[0].clientX - canvas.offsetLeft;
@@ -312,7 +312,7 @@ const getCoordinates = e => {
 
 const draw = e => {
     if (!painting) return;
-    let { x, y } = getCoordinates(e);
+    let { x, y } = coords(e);
     ctx.lineTo(x, y);
     ctx.stroke();
     ctx.beginPath();
@@ -323,12 +323,12 @@ const draw = e => {
     e.preventDefault();
 };
 
-canvas.addEventListener('mousedown', startPosition);
-canvas.addEventListener('mouseup', endPosition);
+canvas.addEventListener('mousedown', start);
+canvas.addEventListener('mouseup', end);
 canvas.addEventListener('mousemove', draw);
 
-canvas.addEventListener('touchstart', startPosition);
-canvas.addEventListener('touchend', endPosition);
+canvas.addEventListener('touchstart', start);
+canvas.addEventListener('touchend', end);
 canvas.addEventListener('touchmove', draw);
 
 document.querySelector('#clear-btn').addEventListener('click', clear);
@@ -393,7 +393,7 @@ const timer = level => {
     //     url.delete('clear');
     //     window.history.replaceState(null, '', window.location.pathname);
     // }
-    generateQuestion(false, level);
+    question(false, level);
     document.querySelector(`#level-${level}`).setAttribute('checked', true);
     timer(level);
     const {data: d, removedData: rd} = get(`data-${level}`, {data: [], removedData: []});
