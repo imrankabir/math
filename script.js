@@ -91,10 +91,10 @@ const question = (force, level) => {
         let maxNum2 = 0;
         if (level === 'novice') {
             if (operation === '-') {
-                maxNum1 = 5;
-                maxNum2 = 3;
-            } else {
                 maxNum1 = 10;
+                maxNum2 = 6;
+            } else {
+                maxNum1 = 15;
                 maxNum2 = 10;
             }
         } else if (level === 'easy') {
