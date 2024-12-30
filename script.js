@@ -94,8 +94,8 @@ const question = (force, level) => {
                 maxNum1 = 5;
                 maxNum2 = 3;
             } else {
-                maxNum1 = 8;
-                maxNum2 = 6;
+                maxNum1 = 10;
+                maxNum2 = 10;
             }
         } else if (level === 'easy') {
             if (operation === '*') {
